@@ -378,6 +378,125 @@
             color: #aaa;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close-modal:hover {
+            color: var(--sheraton-red);
+        }
+        
+        .modal-title {
+            color: var(--sheraton-red);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-form .form-group {
+            margin: 15px 0;
+        }
+        
+        .modal-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .modal-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--sheraton-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .modal-btn:hover {
+            background-color: var(--sheraton-gold);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .form-footer a {
+            color: var(--sheraton-red);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* User Info */
+        .user-info {
+            display: none;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 15px;
+            color: var(--sheraton-red);
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            padding: 6px 12px;
+            background-color: transparent;
+            border: 1px solid var(--sheraton-red);
+            color: var(--sheraton-red);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--sheraton-red);
+            color: white;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-links {
@@ -414,9 +533,13 @@
                 <li><a href="#">Meetings & Events</a></li>
                 <li><a href="#">Bonvoy Loyalty</a></li>
             </ul>
-            <div class="auth-buttons">
-                <a href="#" class="login">Sign In</a>
-                <a href="#" class="signup">Join</a>
+            <div class="auth-buttons" id="authButtons">
+                <a href="#" class="login" id="loginBtn">Sign In</a>
+                <a href="#" class="signup" id="signupBtn">Join</a>
+            </div>
+            <div class="user-info" id="userInfo">
+                <span class="user-name" id="userName"></span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
             </div>
         </nav>
     </header>
@@ -582,7 +705,75 @@
         </div>
     </footer>
 
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeLogin">&times;</span>
+            <h2 class="modal-title">Sign In</h2>
+            <form class="modal-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="modal-btn">Sign In</button>
+            </form>
+            <div class="form-footer">
+                <p>Don't have an account? <a id="switchToSignup">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeSignup">&times;</span>
+            <h2 class="modal-title">Create Account</h2>
+            <form class="modal-form" id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirm">Confirm Password</label>
+                    <input type="password" id="signupConfirm" required>
+                </div>
+                <button type="submit" class="modal-btn">Create Account</button>
+            </form>
+            <div class="form-footer">
+                <p>Already have an account? <a id="switchToLogin">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const closeLogin = document.getElementById('closeLogin');
+        const closeSignup = document.getElementById('closeSignup');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const authButtons = document.getElementById('authButtons');
+        const userInfo = document.getElementById('userInfo');
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+
         // Set default check-in to today and check-out to tomorrow
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
@@ -606,7 +797,108 @@
                 }
                 alert(`Searching for hotels in ${destination}`);
             });
+
+            // Check if user is logged in
+            checkLoginStatus();
         });
+
+        // Modal Event Listeners
+        loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
+        signupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
+        closeLogin.addEventListener('click', () => loginModal.style.display = 'none');
+        closeSignup.addEventListener('click', () => signupModal.style.display = 'none');
+        switchToSignup.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex';
+        });
+        switchToLogin.addEventListener('click', () => {
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) loginModal.style.display = 'none';
+            if (e.target === signupModal) signupModal.style.display = 'none';
+        });
+
+        // Login Form Submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('sheratonUsers')) || [];
+            
+            // Check if user exists
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Login successful
+                localStorage.setItem('sheratonCurrentUser', JSON.stringify(user));
+                loginModal.style.display = 'none';
+                checkLoginStatus();
+                alert('Login successful! Welcome back, ' + user.name);
+            } else {
+                alert('Invalid email or password. Please try again.');
+            }
+        });
+
+        // Signup Form Submission
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            
+            // Validate passwords match
+            if (password !== confirm) {
+                alert('Passwords do not match. Please try again.');
+                return;
+            }
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('sheratonUsers')) || [];
+            
+            // Check if user already exists
+            if (users.some(u => u.email === email)) {
+                alert('An account with this email already exists. Please log in.');
+                return;
+            }
+            
+            // Create new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('sheratonUsers', JSON.stringify(users));
+            localStorage.setItem('sheratonCurrentUser', JSON.stringify(newUser));
+            
+            signupModal.style.display = 'none';
+            checkLoginStatus();
+            alert('Account created successfully! Welcome to Sheraton, ' + name);
+        });
+
+        // Logout Functionality
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('sheratonCurrentUser');
+            checkLoginStatus();
+            alert('You have been logged out successfully.');
+        });
+
+        // Check Login Status
+        function checkLoginStatus() {
+            const currentUser = JSON.parse(localStorage.getItem('sheratonCurrentUser'));
+            
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                userInfo.style.display = 'flex';
+                userName.textContent = currentUser.name;
+            } else {
+                authButtons.style.display = 'block';
+                userInfo.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
